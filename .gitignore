@@ -7,4 +7,5 @@ finance.db
 *.pid
 *.out
 .ipynb_checkpoints
-env/
+venv/
+SQLiteStudio
