@@ -51,10 +51,12 @@ def fetchall_null_id_user(fullname: str) -> bool:
         return False
 
 
-def fetchall_flow_id(id_users: int) -> int:
+def fetchall_flow_id(id_users: int) -> list:
     cursor.execute(f"SELECT flow_id, flow_name FROM users where id_user ='{id_users}' ")
     row = cursor.fetchone()
     if row:
+        print(row[0])
+        print(row)
         return row[0]
 
 
