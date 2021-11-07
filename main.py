@@ -48,9 +48,9 @@ async def send_welcome(msg: types.Message):
 
 @dp.message_handler()
 async def send_welcome(msg: types.Message):
-    print(msg.text)
-    print(msg.md_text)
-    print(msg.from_user.id)
+    # print(msg.text)
+    # print(msg.md_text)
+    # print(msg.from_user.id)
     if msg.text.title() == 'Авторизация':
         if fetchall_id(msg.from_user.id):
             name_group = fetchall_group(msg.from_user.id)
@@ -107,13 +107,13 @@ async def send_welcome(msg: types.Message):
             responsible_id_flow = msg.values['reply_to_message']['contact']['phone_number']
             responsible_id_tlg = get_tlg_id(responsible_id_flow)
             owner_id, owner_name = fetchall_flow_id(msg.from_user.id)
-            print(owner_name,owner_id)
+            # print(owner_name,owner_id)
             title = msg.text.replace('#Задача ', '').replace('#Задача', '').replace('#задача', '').replace('#задача ', '')
             if len(title) > 3:
                 flow_connect_request(title, responsible_id_flow, owner_id)
                 await msg.answer('Задача успешно поставлена!')
                 await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
-                                                           f"Заголовок задачи:{title} ")
+                                                           f"Заголовок задачи: {title} ")
             else:
                 await msg.answer('Тело текста задачи должно быть больше 3 символов!\n ПРИМЕР:\n'
                                  '#Задача Текст задачи')
