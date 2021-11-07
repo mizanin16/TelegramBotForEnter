@@ -64,7 +64,6 @@ async def send_welcome(msg: types.Message):
             await msg.answer("Необходимо связать свой аккаунт с аккаунтом из Flow\n"
                              "Введите @enter_promo_bot и выберите себя из списка.")
             await msg.answer_photo(photo=open('media/inline_msg.jpg', 'rb'))
-            await msg.answer_photo(photo=open('media/request_contact.jpg', 'rb'))
             await msg.answer("Прикрепив контакт к сообщению введите #Name")
             await msg.answer_photo(photo=open('media/end_msg.jpg', 'rb'))
 
