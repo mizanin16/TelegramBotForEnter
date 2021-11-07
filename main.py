@@ -36,7 +36,7 @@ async def send_welcome(msg: types.Message):
         await msg.answer_photo(photo=open('media/inline_msg_cut.jpg', 'rb'))
         await msg.answer(
             f'2. Прикрепить выбранный контакт к следущему сообщению')
-        await msg.answer_photo(photo=open('media/reply_contact.jpg.png', 'rb'))
+        await msg.answer_photo(photo=open('media/reply_contact.jpg', 'rb'))
         await msg.answer(
             f'3. Прописать команду\nПример:\n#Задача Заголовок задачи\n')
         await msg.answer_photo(photo=open('media/msg_end_example.png', 'rb'))
