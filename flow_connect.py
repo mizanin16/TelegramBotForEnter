@@ -9,7 +9,7 @@ def flow_connect_request(title: str, responsible_id: int, owner_id: int):
     post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/create'
     query_params.update(
         {'name': f'{title}', 'description': 'Задача создана посредством работы бота в телеграмме',
-         'priority': 1, 'responsible_id': owner_id, 'owner_id': responsible_id, 'type': 0})
+         'priority': 1, 'responsible_id': responsible_id, 'owner_id': owner_id, 'type': 0})
 
     print(query_params)
     new_post = requests.post(post, data=query_params)

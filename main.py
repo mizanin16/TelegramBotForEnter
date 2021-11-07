@@ -103,13 +103,15 @@ async def send_welcome(msg: types.Message):
             update_new(set_value, id_user)
     elif '#Задача' in msg.text.title():
         if 'reply_to_message' in msg.values:
-            # print(msg.values['reply_to_message']['contact'])
-            owner_id = msg.values['reply_to_message']['contact']['phone_number']
-            responsible_id = fetchall_flow_id(msg.from_user.id)
+            # owner - владелец
+            responsible_id_flow = msg.values['reply_to_message']['contact']['phone_number']
+            responsible_id_tlg = get_tlg_id(responsible_id_flow)
+            owner_id = fetchall_flow_id(msg.from_user.id)
             title = msg.text.replace('#Задача ', '').replace('#Задача', '').replace('#задача', '').replace('#задача ', '')
             if len(title) > 3:
-                flow_connect_request(title, responsible_id, owner_id)
+                flow_connect_request(title, responsible_id_flow, owner_id)
                 await msg.answer('Задача успешно поставлена!')
+                await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {msg.values['reply_to_message']['contact']['fullname']}!\n{title} ")
             else:
                 await msg.answer('Тело текста задачи должно быть больше 3 символов!\n ПРИМЕР:\n'
                                  '#Задача Текст задачи')

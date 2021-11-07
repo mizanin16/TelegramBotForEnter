@@ -70,6 +70,11 @@ def fetchall_inline_users(text) -> list:
     rows = cursor.fetchall()
     return rows
 
+def get_tlg_id(flow_id: str) -> str:
+    cursor.execute(f"SELECT id_user FROM users where flow_id = {flow_id} ")
+    row = cursor.fetchone()
+    return row[0]
+
 
 def null_telegram_id_users(text) -> list:
     if text != '':
