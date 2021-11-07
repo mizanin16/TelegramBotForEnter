@@ -19,7 +19,7 @@ def flow_connect_request(title: str, responsible_id: int, owner_id: int):
 
 def flow_delete():
     query_params = {"api_key": api_key}
-    id = 672
+    id = 673
     post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/delete/{id}'
     # query_params.update(
     #     {'name': f'{title}', 'description': 'Задача создана посредством работы бота в телеграмме',

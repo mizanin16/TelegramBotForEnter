@@ -55,9 +55,7 @@ def fetchall_flow_id(id_users: int) -> list:
     cursor.execute(f"SELECT flow_id, flow_name FROM users where id_user ='{id_users}' ")
     row = cursor.fetchone()
     if row:
-        print(row[0])
-        print(row)
-        return row[0]
+        return row
 
 
 def delete_user(id_users: int):
