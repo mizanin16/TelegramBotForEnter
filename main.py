@@ -106,7 +106,7 @@ async def send_welcome(msg: types.Message):
             # print(msg.values['reply_to_message']['contact'])
             owner_id = msg.values['reply_to_message']['contact']['phone_number']
             responsible_id = fetchall_flow_id(msg.from_user.id)
-            title = msg.text.replace('#Задача ', '').replace('#Задача', '')
+            title = msg.text.replace('#Задача ', '').replace('#Задача', '').replace('#задача', '').replace('#задача ', '')
             if len(title) > 3:
                 flow_connect_request(title, responsible_id, owner_id)
                 await msg.answer('Задача успешно поставлена!')
