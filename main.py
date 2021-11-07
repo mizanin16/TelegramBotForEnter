@@ -111,7 +111,8 @@ async def send_welcome(msg: types.Message):
             if len(title) > 3:
                 flow_connect_request(title, responsible_id_flow, owner_id)
                 await msg.answer('Задача успешно поставлена!')
-                await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n{title} ")
+                await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
+                                                           f"Заголовок задачи:{title} ")
             else:
                 await msg.answer('Тело текста задачи должно быть больше 3 символов!\n ПРИМЕР:\n'
                                  '#Задача Текст задачи')
