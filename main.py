@@ -126,7 +126,7 @@ async def send_welcome(msg: types.Message):
         for items in list_project:
             id_project = items['id']
             name_project = items['name']
-            msg_list_items = msg_list_items + id_project + ':' + name_project +'\n'
+            msg_list_items = msg_list_items + str(id_project) + ':' + name_project + '\n'
         await msg.answer(msg_list_items)
 
     elif '#Удалить' in msg.text.title():
