@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 company = 'enterpromo'
@@ -32,3 +34,17 @@ def flow_delete():
 
 
 # flow_delete()
+
+def flow_get_project_list() -> list:
+    # query_params = {"api_key": api_key}
+    post = rf'https://{company}.flowlu.ru/api/v1/module/st/projects/list?api_key={api_key}'
+    # print(query_params)
+    new_post = requests.get(post)
+    print(new_post)
+    print(new_post.text)
+    js_text = json.loads(new_post.text)
+    print(js_text)
+    print()
+    return js_text['response']['items']
+
+flow_get_project_list()

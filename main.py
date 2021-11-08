@@ -4,7 +4,7 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 import markup as nav
-from flow_connect import flow_connect_request
+from flow_connect import flow_connect_request, flow_get_project_list
 import aioschedule
 
 from db import *
@@ -117,9 +117,18 @@ async def send_welcome(msg: types.Message):
             else:
                 await msg.answer('Тело текста задачи должно быть больше 3 символов!\n ПРИМЕР:\n'
                                  '#Задача Текст задачи')
-
         else:
             await msg.answer('Вы не прикрепили контакт человека')
+
+    elif '#Проекты' in msg.text.title():
+        list_project = flow_get_project_list()
+        msg_list_items = ''
+        for items in list_project:
+            id_project = items['id']
+            name_project = items['name']
+            msg_list_items = msg_list_items + id_project + ':' + name_project +'\n'
+        await msg.answer(msg_list_items)
+
     elif '#Удалить' in msg.text.title():
         if 'reply_to_message' in msg.values:
             if msg.from_user.id in list_boss:
