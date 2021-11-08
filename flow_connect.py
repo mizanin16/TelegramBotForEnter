@@ -57,7 +57,7 @@ def flow_get_project_list() -> list:
     # print(new_post)
     # print(new_post.text)
     js_text = json.loads(new_post.text)
-    result = [{'id': 0, 'name': 'Без названия'}]
+    result = [{'id': 0, 'name': 'Без проекта'}]
     for row in js_text['response']['items']:
         result.append(row)
     # print()
