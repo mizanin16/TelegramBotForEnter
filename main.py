@@ -156,7 +156,8 @@ async def inline_handler(query: types.InlineQuery):
         for items in list_project:
             id_project = items['id']
             name_project = items['name']
-            item = types.InlineQueryResultArticle(id=id_project, title=name_project)
+            item = types.InlineQueryResultArticle(id=id_project, title=name_project,
+                                                  input_message_content=types.InputMessageContent(id_project))
             results.append(item)
         return await query.answer(results=results, cache_time=60,
                                   is_personal=True)
