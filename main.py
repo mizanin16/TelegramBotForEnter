@@ -151,13 +151,14 @@ async def inline_handler(query: types.InlineQuery):
     rows = fetchall_inline_users(text)
     results = []
     id_users_list = []
+
     if text.title() == "Проект":
         list_project = flow_get_project_list()
         for items in list_project:
             id_project = items['id']
             name_project = items['name']
             item = types.InlineQueryResultArticle(id=id_project, title=name_project,
-                                                  input_message_content=types.InputMessageContent(id_project))
+                                                  input_message_content=types.InputMessageContent(message_text="Проект"))
             results.append(item)
         return await query.answer(results=results, cache_time=60,
                                   is_personal=True)
