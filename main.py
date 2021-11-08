@@ -119,8 +119,9 @@ async def send_welcome(msg: types.Message):
                 if len(project_id) > 0:
                     project_name = list_project[int(project_id[0])]
                     print(project_id[0])
+                    title = title[:-3] + re.sub(project_id[0], '', title[-3:])
                     flow_connect_request(title, responsible_id_flow, owner_id, int(project_id[0]))
-                    title_msg = title[:-3] + re.sub(project_id[0], '', title[-3:]) + "Проект: " + project_name['name']
+                    title_msg = title + "Проект: " + project_name['name']
                     await msg.answer('Задача успешно поставлена!')
                     await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
                                                                f"Заголовок задачи: {title_msg} ")
