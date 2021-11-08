@@ -151,7 +151,7 @@ async def inline_handler(query: types.InlineQuery):
     rows = fetchall_inline_users(text)
     results = []
     id_users_list = []
-    if text.title() == "проект":
+    if text.title() == "Проект":
         list_project = flow_get_project_list()
         for items in list_project:
             id_project = items['id']
