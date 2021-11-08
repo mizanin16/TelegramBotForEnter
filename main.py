@@ -151,23 +151,34 @@ async def inline_handler(query: types.InlineQuery):
     rows = fetchall_inline_users(text)
     results = []
     id_users_list = []
-    for row in rows:
-        id_users_list.append(row[2])
-        item = types.InlineQueryResultContact(id=f'{row[0]}', phone_number=row[0], first_name=row[1])
-        results.append(item)
-    # print(id_users_list)
-    if query.from_user['id'] in id_users_list:
+    if text.title() == "проект":
+        list_project = flow_get_project_list()
+        for items in list_project:
+            id_project = items['id']
+            name_project = items['name']
+            item = types.InlineQueryResultArticle(id=id_project, title=name_project)
+            results.append(item)
         return await query.answer(results=results, cache_time=60,
                                   is_personal=True)
-    else:
 
-        null_users = null_telegram_id_users(text)
-        results_null = []
-        for row_null in null_users:
-            item = types.InlineQueryResultContact(id=f'{row_null[0]}', phone_number=row_null[0], first_name=row_null[1])
-            results_null.append(item)
-            return await query.answer(results=results_null, cache_time=60,
+    else:
+        for row in rows:
+            id_users_list.append(row[2])
+            item = types.InlineQueryResultContact(id=f'{row[0]}', phone_number=row[0], first_name=row[1])
+            results.append(item)
+        # print(id_users_list)
+        if query.from_user['id'] in id_users_list:
+            return await query.answer(results=results, cache_time=60,
                                       is_personal=True)
+        else:
+
+            null_users = null_telegram_id_users(text)
+            results_null = []
+            for row_null in null_users:
+                item = types.InlineQueryResultContact(id=f'{row_null[0]}', phone_number=row_null[0], first_name=row_null[1])
+                results_null.append(item)
+                return await query.answer(results=results_null, cache_time=60,
+                                          is_personal=True)
 
 
 async def flowlu_connect_refresh():
