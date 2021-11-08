@@ -13,7 +13,7 @@ def flow_connect_request(title: str, responsible_id: int, owner_id: int, model_i
         {'name': f'{title}', 'description': 'Задача создана посредством работы бота в телеграмме',
          'priority': 1, 'responsible_id': responsible_id, 'owner_id': owner_id, 'type': 0})
     if model_id != 0:
-        query_params.update({'model_id': model_id})
+        query_params.update({"module": "st", "model": "project", 'model_id': model_id})
 
     print(query_params)
     new_post = requests.post(post, data=query_params)
