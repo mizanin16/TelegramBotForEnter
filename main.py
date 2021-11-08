@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
@@ -51,6 +52,8 @@ async def send_welcome(msg: types.Message):
     # print(msg.text)
     # print(msg.md_text)
     # print(msg.from_user.id)
+    list_project = flow_get_project_list()
+
     if msg.text.title() == 'Авторизация':
         if fetchall_id(msg.from_user.id):
             name_group = fetchall_group(msg.from_user.id)
@@ -108,12 +111,24 @@ async def send_welcome(msg: types.Message):
             responsible_id_tlg = get_tlg_id(responsible_id_flow)
             owner_id, owner_name = fetchall_flow_id(msg.from_user.id)
             # print(owner_name,owner_id)
-            title = msg.text.replace('#Задача ', '').replace('#Задача', '').replace('#задача', '').replace('#задача ', '')
+            title = msg.text.replace('#Задача ', '').replace('#Задача', '').replace('#задача', '').replace('#задача ',
+                                                                                                           '')
             if len(title) > 3:
-                flow_connect_request(title, responsible_id_flow, owner_id)
-                await msg.answer('Задача успешно поставлена!')
-                await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
-                                                           f"Заголовок задачи: {title} ")
+                if 'проект' in title.lower():
+                    project_id = re.findall(r'\d+$', title)
+                    if len(project_id) > 0:
+                        project_name = list_project[project_id[0]]
+                        print(project_id[0])
+                        flow_connect_request(title, responsible_id_flow, owner_id, int(project_id[0]))
+                        title_msg = title[:-3] + re.sub(project_id[0], '', title[-3:]) + project_name
+                        await msg.answer('Задача успешно поставлена!')
+                        await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
+                                                                   f"Заголовок задачи: {title_msg} ")
+                    else:
+                        await msg.answer('Отсутствует номер проекта')
+                else:
+                    await msg.answer('Отсутствует наименование проекта')
+
             else:
                 await msg.answer('Тело текста задачи должно быть больше 3 символов!\n ПРИМЕР:\n'
                                  '#Задача Текст задачи')
@@ -121,12 +136,11 @@ async def send_welcome(msg: types.Message):
             await msg.answer('Вы не прикрепили контакт человека')
 
     elif '#Проекты' in msg.text.title():
-        list_project = flow_get_project_list()
         msg_list_items = ''
         for items in list_project:
             id_project = items['id']
             name_project = items['name']
-            msg_list_items = msg_list_items + str(id_project) + ':' + name_project + '\n'
+            msg_list_items = msg_list_items + str(id_project) + ': ' + name_project + '\n'
         await msg.answer(msg_list_items)
 
     elif '#Удалить' in msg.text.title():
@@ -158,7 +172,8 @@ async def inline_handler(query: types.InlineQuery):
             id_project = items['id']
             name_project = items['name']
             item = types.InlineQueryResultArticle(id=id_project, title=name_project,
-                                                  input_message_content=types.InputMessageContent(message_text=id_project))
+                                                  input_message_content=types.InputMessageContent(
+                                                      message_text=id_project))
             results.append(item)
         return await query.answer(results=results, cache_time=60,
                                   is_personal=True)
@@ -177,7 +192,8 @@ async def inline_handler(query: types.InlineQuery):
             null_users = null_telegram_id_users(text)
             results_null = []
             for row_null in null_users:
-                item = types.InlineQueryResultContact(id=f'{row_null[0]}', phone_number=row_null[0], first_name=row_null[1])
+                item = types.InlineQueryResultContact(id=f'{row_null[0]}', phone_number=row_null[0],
+                                                      first_name=row_null[1])
                 results_null.append(item)
                 return await query.answer(results=results_null, cache_time=60,
                                           is_personal=True)
