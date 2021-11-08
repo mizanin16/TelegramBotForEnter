@@ -39,7 +39,9 @@ async def send_welcome(msg: types.Message):
             f'2. Прикрепить выбранный контакт к следущему сообщению')
         await msg.answer_photo(photo=open('media/reply_contact.jpg', 'rb'))
         await msg.answer(
-            f'3. Прописать команду\nПример:\n#Задача Заголовок задачи\n')
+            f'3. Прописать команду\nПример:\n#Задача Заголовок задачи ЦИФРА ПРОЕКТА\n')
+        await msg.answer(
+            f'4. Чтобы узнать список проектов, введите #Проекты')
         # await msg.answer_photo(photo=open('media/msg_end_example.png', 'rb'))
     else:
         await msg.answer(
@@ -110,38 +112,38 @@ async def send_welcome(msg: types.Message):
             responsible_id_flow = msg.values['reply_to_message']['contact']['phone_number']
             responsible_id_tlg = get_tlg_id(responsible_id_flow)
             owner_id, owner_name = fetchall_flow_id(msg.from_user.id)
-            # print(owner_name,owner_id)
             title = msg.text.replace('#Задача ', '').replace('#Задача', '').replace('#задача', '').replace('#задача ',
                                                                                                            '')
             if len(title) > 3:
-                if 'проект' in title.lower():
-                    project_id = re.findall(r'\d+$', title)
-                    if len(project_id) > 0:
-                        project_name = list_project[project_id[0]]
-                        print(project_id[0])
-                        flow_connect_request(title, responsible_id_flow, owner_id, int(project_id[0]))
-                        title_msg = title[:-3] + re.sub(project_id[0], '', title[-3:]) + project_name
-                        await msg.answer('Задача успешно поставлена!')
-                        await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
-                                                                   f"Заголовок задачи: {title_msg} ")
-                    else:
-                        await msg.answer('Отсутствует номер проекта')
+                project_id = re.findall(r'\d+$', title)
+                if len(project_id) > 0:
+                    project_name = list_project[project_id[0]]
+                    print(project_id[0])
+                    flow_connect_request(title, responsible_id_flow, owner_id, int(project_id[0]))
+                    title_msg = title[:-3] + re.sub(project_id[0], '', title[-3:]) + "Проект: " + project_name
+                    await msg.answer('Задача успешно поставлена!')
+                    await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
+                                                               f"Заголовок задачи: {title_msg} ")
                 else:
-                    await msg.answer('Отсутствует наименование проекта')
+                    await msg.answer('Отсутствует номер проекта. '
+                                     'Чтобы узнать номер доступных проектов напишите команду #Проекты\n'
+                                     'ПРИМЕР КОМАНДЫ:\n#Задача Текст задачи ЦИФРА ПРОЕКТА')
 
             else:
                 await msg.answer('Тело текста задачи должно быть больше 3 символов!\n ПРИМЕР:\n'
-                                 '#Задача Текст задачи')
+                                 '#Задача Текст задачи ЦИФРА ПРОЕКТА')
         else:
             await msg.answer('Вы не прикрепили контакт человека')
 
     elif '#Проекты' in msg.text.title():
         msg_list_items = ''
-        for items in list_project:
-            id_project = items['id']
-            name_project = items['name']
-            msg_list_items = msg_list_items + str(id_project) + ': ' + name_project + '\n'
-        await msg.answer(msg_list_items)
+        if fetchall_id(msg.from_user.id):
+
+            for items in list_project:
+                id_project = items['id']
+                name_project = items['name']
+                msg_list_items = msg_list_items + str(id_project) + ': ' + name_project + '\n'
+            await msg.answer(msg_list_items)
 
     elif '#Удалить' in msg.text.title():
         if 'reply_to_message' in msg.values:
