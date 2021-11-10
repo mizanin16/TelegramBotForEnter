@@ -5,7 +5,7 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 import markup as nav
-from flow_connect import flow_connect_request, flow_get_project_list
+from flow_connect import flow_connect_request, flow_get_project_list, flow_get_task_list
 import aioschedule
 
 from db import *
@@ -126,17 +126,18 @@ async def send_welcome(msg: types.Message):
                         if current_name['id'] == int(project_id[0]):
                             project_name = current_name['name']
                     if project_name == '':
-                        await msg.answer('НЕ НАЙДЕН ИЗ СПИСКА ПРОЕКТОВ')
+                        await msg.answer('НЕ НАЙДЕН ИЗ СПИСКА ПРОЕКТОВ!')
                         return
                     title = title[:-3] + re.sub(project_id[0], '', title[-3:])
                     flow_connect_request(title, responsible_id_flow, owner_id, int(project_id[0]))
+                    flow_id_task = flow_get_task_list(title)
                     if int(project_id[0]) == 0:
                         title_msg = title + "Без привязки к проекту "
                     else:
                         title_msg = title + "Проект: " + project_name
                     await msg.answer('Задача успешно поставлена!')
                     await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
-                                                               f"Заголовок задачи: {title_msg} ")
+                                                               f"Заголовок задачи: {title_msg} ID задачи: {flow_id_task}")
                 else:
                     await msg.answer('Отсутствует номер проекта. '
                                      'Чтобы узнать номер доступных проектов напишите команду #Проекты\n'

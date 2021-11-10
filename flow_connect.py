@@ -13,7 +13,7 @@ def flow_connect_request(title: str, responsible_id: int, owner_id: int, model_i
         {'name': f'{title}', 'description': 'Задача создана посредством работы бота в телеграмме',
          'priority': 1, 'responsible_id': responsible_id, 'owner_id': owner_id, 'type': 0})
     if model_id != 0:
-        query_params.update({"module": "st", "model": "project", 'model_id': model_id})
+        query_params.update({"module": "st", "model": "project", 'model_id': model_id, 'project_stage_id': 1})
     print('flow_connect_request success')
     print(query_params)
     new_post = requests.post(post, data=query_params)
@@ -37,16 +37,32 @@ def flow_delete():
 
 def flow_get():
     query_params = {"api_key": api_key}
-    id = 617
-    post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/get/{id}?api_key={api_key}'
+    id = 478
+    post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/list?api_key={api_key}'
+    # post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/get/{id}?api_key={api_key}'
     # query_params.update(
     #     {'name': f'{title}', 'description': 'Задача создана посредством работы бота в телеграмме',
     #      'priority': 1, 'responsible_id': responsible_id, 'owner_id': owner_id, 'type': 0})
-
+    query_params_new = []
     print(query_params)
     new_post = requests.get(post)
     print(new_post)
     print(new_post.text)
+    js_text = json.loads(new_post.text)
+    print(js_text)
+    # print(js_text['response']['workflow_id'])
+    # print(js_text['response']['workflow_stage_id'])
+    # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
+    print()
+
+
+def flow_get_task_list(name) -> int:
+    post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/list?api_key={api_key}'
+    new_post = requests.get(post)
+    js_text = json.loads(new_post.text)
+    for row in js_text['response']['items']:
+        if name == row['name']:
+            return row['id']
 
 
 def flow_get_project_list() -> list:
@@ -65,4 +81,5 @@ def flow_get_project_list() -> list:
 
 # flow_delete()
 # flow_get_project_list()
-flow_get()
+# flow_get()
+flow_get_task_list()
