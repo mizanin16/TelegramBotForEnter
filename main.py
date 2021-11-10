@@ -125,6 +125,8 @@ async def send_welcome(msg: types.Message):
                     for current_name in list_project:
                         if current_name['id'] == int(project_id[0]):
                             project_name = current_name['name']
+                    else:
+                        await msg.answer('НЕ НАЙДЕН ИЗ СПИСКА ПРОЕКТОВ!')
                     title = title[:-3] + re.sub(project_id[0], '', title[-3:])
                     flow_connect_request(title, responsible_id_flow, owner_id, int(project_id[0]))
                     if int(project_id[0]) == 0:
