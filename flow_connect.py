@@ -64,7 +64,7 @@ def flow_get_task_list(name) -> int:
     print(js_text)
     for row in js_text['response']['items']:
         if name == row['name']:
-            return row['id']
+            return int(row['id'])
 
 
 def flow_get_project_list() -> list:
@@ -84,4 +84,4 @@ def flow_get_project_list() -> list:
 # flow_delete()
 # flow_get_project_list()
 # flow_get()
-flow_get_task_list()
+# flow_get_task_list()
