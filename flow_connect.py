@@ -14,7 +14,7 @@ def flow_connect_request(title: str, responsible_id: int, owner_id: int, model_i
          'priority': 1, 'responsible_id': responsible_id, 'owner_id': owner_id, 'type': 0})
     if model_id != 0:
         query_params.update({"module": "st", "model": "project", 'model_id': model_id, 'project_stage_id': 1})
-    print('flow_connect_request success')
+    # print('flow_connect_request success')
     print(query_params)
     new_post = requests.post(post, data=query_params)
     print(new_post)
@@ -52,7 +52,6 @@ def flow_get():
     print(js_text)
     # print(js_text['response']['workflow_id'])
     # print(js_text['response']['workflow_stage_id'])
-    # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
     print()
 
 
@@ -79,6 +78,16 @@ def flow_get_project_list() -> list:
     for row in js_text['response']['items']:
         result.append({'id': row['id'], 'name': row['name']})
     return result
+
+
+def flow_update_task(id_task):
+    query_params = {"api_key": api_key}
+    post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/update/{id}'
+    # print(query_params)
+    query_params.update({'workflow_stage_id': id_task})
+    new_post = requests.post(post, data=query_params)
+    print(new_post)
+    # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
 
 
 # flow_delete()

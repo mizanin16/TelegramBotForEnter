@@ -5,7 +5,7 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 import markup as nav
-from flow_connect import flow_connect_request, flow_get_project_list, flow_get_task_list
+from flow_connect import flow_connect_request, flow_get_project_list, flow_get_task_list, flow_update_task
 import aioschedule
 
 from db import *
@@ -168,7 +168,9 @@ async def send_welcome(msg: types.Message):
                 await msg.answer('У вас нет прав для удаления!')
         else:
             await msg.answer('Вы не прикрепили контакт человека')
-
+    elif "#в работе:" in msg.text.lower():
+        if 'reply_to_message' in msg.values:
+            print(msg.values['reply_to_message'])
     else:
         await msg.answer(
             f'Команд на выпонение не найдено')
