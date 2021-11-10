@@ -56,11 +56,11 @@ def flow_get():
 
 
 def flow_get_task_list(name) -> int:
-    print(name)
+    # print(name)
     post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/list?api_key={api_key}'
     new_post = requests.get(post)
     js_text = json.loads(new_post.text)
-    print(js_text)
+    # print(js_text)
     for row in js_text['response']['items']:
         if name == row['name']:
             return int(row['id'])

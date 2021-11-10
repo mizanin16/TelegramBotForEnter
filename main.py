@@ -170,9 +170,10 @@ async def send_welcome(msg: types.Message):
             await msg.answer('Вы не прикрепили контакт человека')
     elif "#в работе:" in msg.text.lower():
         if 'reply_to_message' in msg.values:
-            print(msg.values['reply_to_message'])
-            print(msg.text)
-            print(msg.values)
+            if 'ID задачи:' in msg.values['reply_to_message']["text"]:
+                text_msg = msg.values['reply_to_message']['text']
+                id_tlg = text_msg[text_msg.find('ID задачи:')+11:]
+                flow_update_task(int(id_tlg))
     else:
         await msg.answer(
             f'Команд на выпонение не найдено')
