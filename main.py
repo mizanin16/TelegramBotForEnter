@@ -120,6 +120,7 @@ async def send_welcome(msg: types.Message):
             if len(title) > 3:
                 project_id = re.findall(r'\d+$', title)
                 if len(project_id) > 0:
+                    project_name = ' НЕ НАЙДЕН ИЗ СПИСКА ПРОЕКТОВ'
                     # list_project = flow_get_project_list()
                     for current_name in list_project:
                         if current_name['id'] == int(project_id[0]):
@@ -129,7 +130,7 @@ async def send_welcome(msg: types.Message):
                     if int(project_id[0]) == 0:
                         title_msg = title + "Без привязки к проекту "
                     else:
-                        title_msg = title + "Проект: " + project_name['name']
+                        title_msg = title + "Проект: " + project_name
                     await msg.answer('Задача успешно поставлена!')
                     await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
                                                                f"Заголовок задачи: {title_msg} ")

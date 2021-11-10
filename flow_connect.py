@@ -37,7 +37,7 @@ def flow_delete():
 
 def flow_get():
     query_params = {"api_key": api_key}
-    id = 642
+    id = 617
     post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/get/{id}?api_key={api_key}'
     # query_params.update(
     #     {'name': f'{title}', 'description': 'Задача создана посредством работы бота в телеграмме',
@@ -65,4 +65,4 @@ def flow_get_project_list() -> list:
 
 # flow_delete()
 # flow_get_project_list()
-# flow_get()
+flow_get()
