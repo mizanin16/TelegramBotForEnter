@@ -174,7 +174,7 @@ async def send_welcome(msg: types.Message):
                 text_msg = msg.values['reply_to_message']['text']
                 id_tlg = text_msg[text_msg.find('ID задачи:')+11:]
                 print(id_tlg)
-                flow_update_task(id_tlg)
+                flow_update_task(id_tlg, stage=2)
                 print('Проект в работе!')
     else:
         await msg.answer(

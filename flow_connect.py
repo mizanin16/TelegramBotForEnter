@@ -80,11 +80,11 @@ def flow_get_project_list() -> list:
     return result
 
 
-def flow_update_task(id_task):
+def flow_update_task(id_task, stage):
     query_params = {"api_key": api_key}
-    post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/update/{id}'
+    post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/update/{id_task}'
     # print(query_params)
-    query_params.update({'workflow_id': 1, 'workflow_stage_id': id_task})
+    query_params.update({'workflow_id': 1, 'workflow_stage_id': stage})
     new_post = requests.post(post, data=query_params)
     print(new_post)
     print(new_post.text)
