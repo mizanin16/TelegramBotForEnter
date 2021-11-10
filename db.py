@@ -115,10 +115,10 @@ def flow_check_users():
     cursor = conn.cursor()
     get_users = fr'https://{company}.flowlu.ru/api/v1/module/core/user/list?api_key={api_key}'
     sd = requests.get(get_users)
-    print(sd)
-    print(sd.text)
+    # print(sd)
+    # print(sd.text)
     all_users = sd.text
-    print()
+    # print()
     js_text = json.loads(all_users)
     for user in js_text['response']['items']:
         info_users = user['name'], user['id'], user['username']
