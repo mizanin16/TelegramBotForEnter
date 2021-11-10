@@ -171,6 +171,8 @@ async def send_welcome(msg: types.Message):
     elif "#в работе:" in msg.text.lower():
         if 'reply_to_message' in msg.values:
             print(msg.values['reply_to_message'])
+            print(msg.text)
+            print(msg.values)
     else:
         await msg.answer(
             f'Команд на выпонение не найдено')
