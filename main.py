@@ -51,7 +51,7 @@ async def send_welcome(msg: types.Message):
 
 @dp.message_handler()
 async def send_welcome(msg: types.Message):
-    # print(msg.text)
+    print(msg.text)
     # print(msg.md_text)
     # print(msg.from_user.id)
     list_project = flow_get_project_list()
