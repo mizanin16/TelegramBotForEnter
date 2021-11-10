@@ -84,9 +84,10 @@ def flow_update_task(id_task):
     query_params = {"api_key": api_key}
     post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/update/{id}'
     # print(query_params)
-    query_params.update({'workflow_stage_id': id_task})
+    query_params.update({'workflow_id': 1, 'workflow_stage_id': id_task})
     new_post = requests.post(post, data=query_params)
     print(new_post)
+    print(new_post.text)
     # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
 
 

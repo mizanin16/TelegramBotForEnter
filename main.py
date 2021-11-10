@@ -173,7 +173,9 @@ async def send_welcome(msg: types.Message):
             if 'ID задачи:' in msg.values['reply_to_message']["text"]:
                 text_msg = msg.values['reply_to_message']['text']
                 id_tlg = text_msg[text_msg.find('ID задачи:')+11:]
-                flow_update_task(int(id_tlg))
+                print(id_tlg)
+                flow_update_task(id_tlg)
+                print('Проект в работе!')
     else:
         await msg.answer(
             f'Команд на выпонение не найдено')
