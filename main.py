@@ -124,6 +124,11 @@ async def send_welcome(msg: types.Message):
                     print(project_id[0])
                     print(type(project_id))
                     list_project = flow_get_project_list()
+                    print(list_project[0])
+                    print(list_project[0]['name'])
+                    print(list_project[1])
+                    print(list_project[1]['name'])
+
                     project_name = list_project[int(project_id[0])]
 
                     print(project_id[0])
