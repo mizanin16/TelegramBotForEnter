@@ -54,7 +54,10 @@ async def send_welcome(msg: types.Message):
     print(msg.text)
     # print(msg.md_text)
     # print(msg.from_user.id)
+
     list_project = flow_get_project_list()
+    print(type(list_project))
+    print(list_project)
 
     if msg.text.title() == 'Авторизация':
         if fetchall_id(msg.from_user.id):
@@ -120,7 +123,9 @@ async def send_welcome(msg: types.Message):
                     print(project_id)
                     print(project_id[0])
                     print(type(project_id))
+
                     project_name = list_project[int(project_id[0])]
+
                     print(project_id[0])
                     title = title[:-3] + re.sub(project_id[0], '', title[-3:])
                     flow_connect_request(title, responsible_id_flow, owner_id, int(project_id[0]))
