@@ -117,6 +117,9 @@ async def send_welcome(msg: types.Message):
             if len(title) > 3:
                 project_id = re.findall(r'\d+$', title)
                 if len(project_id) > 0:
+                    print(project_id)
+                    print(project_id[0])
+                    print(type(project_id))
                     project_name = list_project[int(project_id[0])]
                     print(project_id[0])
                     title = title[:-3] + re.sub(project_id[0], '', title[-3:])
