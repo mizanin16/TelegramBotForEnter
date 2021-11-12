@@ -1,9 +1,10 @@
 import json
-
 import requests
 
-company = 'enterpromo'
-api_key = 'YnI0WDFIZ1hlSTMwUGNkU1E1MThSZnI4cXJxeFBHczNfNzMxMzQ'
+from config import NAME_COMPANY_FLOW, API_COMPANY_FLOW
+
+company = NAME_COMPANY_FLOW
+api_key = API_COMPANY_FLOW
 
 
 def flow_connect_request(title: str, responsible_id: int, owner_id: int, model_id: int):

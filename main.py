@@ -1,16 +1,19 @@
 import asyncio
 import re
+import aioschedule
 
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
+
 import markup as nav
+from config import TELEGRAM_API_TOKEN
 from flow_connect import flow_connect_request, flow_get_project_list, flow_get_task_list, flow_update_task
-import aioschedule
+
 
 from db import *
 
-TOKEN = "2086025382:AAEXqSBsHoz-3jkuvECeATxMKWPyOxarDsQ"
+TOKEN = TELEGRAM_API_TOKEN
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
@@ -168,7 +171,8 @@ async def send_welcome(msg: types.Message):
                 await msg.answer('У вас нет прав для удаления!')
         else:
             await msg.answer('Вы не прикрепили контакт человека')
-    elif "#в работе:" in msg.text.lower():
+    elif "#в работе" in msg.text.lower():
+        # Создаю дикт слово: цифра этапа
         if 'reply_to_message' in msg.values:
             if 'ID задачи:' in msg.values['reply_to_message']["text"]:
                 text_msg = msg.values['reply_to_message']['text']

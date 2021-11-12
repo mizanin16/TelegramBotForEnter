@@ -1,12 +1,15 @@
 import os
 import sqlite3
 from datetime import datetime
-from typing import Dict, List, Tuple
 import json
 import requests
+from config import NAME_COMPANY_FLOW, API_COMPANY_FLOW
 
 conn = sqlite3.connect(os.path.join("db", "users.db"))
 cursor = conn.cursor()
+
+company = NAME_COMPANY_FLOW
+api_key = API_COMPANY_FLOW
 
 
 def update_new(set_values: str, where_values: int):
@@ -70,6 +73,7 @@ def fetchall_inline_users(text) -> list:
     rows = cursor.fetchall()
     return rows
 
+
 def get_tlg_id(flow_id: str) -> str:
     cursor.execute(f"SELECT id_user FROM users where flow_id = {flow_id} ")
     row = cursor.fetchone()
@@ -109,8 +113,6 @@ def fetchall_group(id_users: str) -> str:
 
 def flow_check_users():
     """Заполнение списка пользователей из флоулу"""
-    company = 'enterpromo'
-    api_key = 'YnI0WDFIZ1hlSTMwUGNkU1E1MThSZnI4cXJxeFBHczNfNzMxMzQ'
     conn = sqlite3.connect(os.path.join("db", "users.db"))
     cursor = conn.cursor()
     get_users = fr'https://{company}.flowlu.ru/api/v1/module/core/user/list?api_key={api_key}'

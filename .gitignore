@@ -1,6 +1,6 @@
-finance.db
-**/.DS_Store
+db/users.db
 .idea/
+media
 **/__pycache__
 *.log
 *.pickle
@@ -8,4 +8,6 @@ finance.db
 *.out
 .ipynb_checkpoints
 venv/
-SQLiteStudio
+SQLiteStudio/
+config.py
+base.txt
