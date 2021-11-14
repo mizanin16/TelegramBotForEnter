@@ -10,7 +10,6 @@ import markup as nav
 from config import TELEGRAM_API_TOKEN
 from flow_connect import flow_connect_request, flow_get_project_list, flow_get_task_list, flow_update_task
 
-
 from db import *
 
 TOKEN = TELEGRAM_API_TOKEN
@@ -61,7 +60,8 @@ async def send_welcome(msg: types.Message):
     list_project = flow_get_project_list()
     print(type(list_project))
     print(list_project)
-
+    # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
+    dict_stage_workflow = {'#сделать': 1, '#в работе': 2, '#сделано': 3, '#завершено': 4}
     if msg.text.title() == 'Авторизация':
         if fetchall_id(msg.from_user.id):
             name_group = fetchall_group(msg.from_user.id)
@@ -116,7 +116,7 @@ async def send_welcome(msg: types.Message):
         if 'reply_to_message' in msg.values:
             # owner - владелец
             responsible_id_flow = msg.values['reply_to_message']['contact']['phone_number']
-            responsible_id_tlg = get_tlg_id(responsible_id_flow)
+            responsible_id_tlg = get_tlg_id(flow_id=responsible_id_flow, flow_name=None)
             owner_id, owner_name = fetchall_flow_id(msg.from_user.id)
             title = msg.text.replace('#Задача ', '').replace('#Задача', '').replace('#задача', '').replace('#задача ',
                                                                                                            '')
@@ -171,15 +171,24 @@ async def send_welcome(msg: types.Message):
                 await msg.answer('У вас нет прав для удаления!')
         else:
             await msg.answer('Вы не прикрепили контакт человека')
-    elif "#в работе" in msg.text.lower():
-        # Создаю дикт слово: цифра этапа
+
+    elif msg.text.lower() in dict_stage_workflow.keys():
         if 'reply_to_message' in msg.values:
             if 'ID задачи:' in msg.values['reply_to_message']["text"]:
+                stage = msg.text.title().replace("#", "")
                 text_msg = msg.values['reply_to_message']['text']
-                id_tlg = text_msg[text_msg.find('ID задачи:')+11:]
+                id_tlg = text_msg[text_msg.find('ID задачи:') + 11:]
+                owner_name = text_msg[text_msg.find('от') + 3:text_msg.find('!\n')]
                 print(id_tlg)
-                flow_update_task(id_tlg, stage=2)
-                print('Проект в работе!')
+                flow_update_task(id_tlg, stage=dict_stage_workflow[msg.text.lower()])
+                await msg.answer(f"Успешно произведено изменение этапа на {stage}")
+                owner_id_tlg = get_tlg_id(flow_id=None, flow_name=owner_name)
+                responsible_id, responsible_name = fetchall_flow_id(msg.from_user.id)
+                msg_answer_to_owner = f'{text_msg[text_msg.find("Заголовок задачи"):]}\n' \
+                                      f'Пользователь {responsible_name} изменил этап задачи на ' \
+                                      f'{stage}'
+                await bot.send_message(owner_id_tlg, msg_answer_to_owner)
+
     else:
         await msg.answer(
             f'Команд на выпонение не найдено')

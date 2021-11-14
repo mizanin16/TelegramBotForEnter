@@ -74,8 +74,12 @@ def fetchall_inline_users(text) -> list:
     return rows
 
 
-def get_tlg_id(flow_id: str) -> str:
-    cursor.execute(f"SELECT id_user FROM users where flow_id = {flow_id} ")
+def get_tlg_id(flow_id: str or None, flow_name: str or None) -> str:
+    if not flow_id:
+        where = f'flow_name = "{flow_name}" '
+    else:
+        where = f'flow_id = "{flow_id}" '
+    cursor.execute(f"SELECT id_user FROM users where {where} ")
     row = cursor.fetchone()
     return row[0]
 
