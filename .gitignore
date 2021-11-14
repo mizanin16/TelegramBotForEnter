@@ -1,6 +1,6 @@
-db/users.db
+#db/users.db
 .idea/
-media
+#media
 **/__pycache__
 *.log
 *.pickle
@@ -9,6 +9,5 @@ media
 .ipynb_checkpoints
 venv/
 SQLiteStudio/
-config.py
+#config.py
 base.txt
-git_test
