@@ -188,7 +188,7 @@ async def send_welcome(msg: types.Message):
                 owner_id_tlg = get_tlg_id(flow_id=None, flow_name=owner_name)
                 responsible_id, responsible_name = fetchall_flow_id(msg.from_user.id)
                 msg_answer_to_owner = f'{text_msg[text_msg.find("Заголовок задачи"):]}\n' \
-                                      f'Пользователь {responsible_name} изменил этап задачи проета.\nЭтап: {stage}'
+                                      f'Пользователь {responsible_name} изменил этап задачи проекта.\nЭтап: {stage}'
 
                 await bot.send_message(owner_id_tlg, msg_answer_to_owner)
 
