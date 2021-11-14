@@ -44,6 +44,9 @@ async def send_welcome(msg: types.Message):
             f'3. Прописать команду\nПример:\n#Задача Заголовок задачи ЦИФРА ПРОЕКТА\n')
         await msg.answer(
             f'4. Чтобы узнать список проектов, введите #Проекты')
+        await msg.answer(
+            f'5. Чтобы изменить этап проекта, необходимо прикрепить сообщение с поставленной задачей и ввести команду\n'
+            f'Список доступных команд:\n #Сделать \n #В Работе \n #Сделано \n #Завершено')
         # await msg.answer_photo(photo=open('media/msg_end_example.png', 'rb'))
     else:
         await msg.answer(
@@ -181,12 +184,12 @@ async def send_welcome(msg: types.Message):
                 owner_name = text_msg[text_msg.find('от') + 3:text_msg.find('!\n')]
                 print(id_tlg)
                 flow_update_task(id_tlg, stage=dict_stage_workflow[msg.text.lower()])
-                await msg.answer(f"Успешно произведено изменение этапа на {stage}")
+                await msg.answer(f"Успешно произведено изменение этапа проекта.\nЭтап: {stage}")
                 owner_id_tlg = get_tlg_id(flow_id=None, flow_name=owner_name)
                 responsible_id, responsible_name = fetchall_flow_id(msg.from_user.id)
                 msg_answer_to_owner = f'{text_msg[text_msg.find("Заголовок задачи"):]}\n' \
-                                      f'Пользователь {responsible_name} изменил этап задачи на ' \
-                                      f'{stage}'
+                                      f'Пользователь {responsible_name} изменил этап задачи проета.\nЭтап: {stage}'
+
                 await bot.send_message(owner_id_tlg, msg_answer_to_owner)
 
     else:
