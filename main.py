@@ -53,7 +53,7 @@ async def send_welcome(msg: types.Message):
 
 @dp.message_handler()
 async def send_welcome(msg: types.Message):
-    print('message = ' + msg.text)
+    print('Message = ' + msg.text)
     # print(msg.md_text)
     # print(msg.from_user.id)
 
