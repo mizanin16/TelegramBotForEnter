@@ -64,7 +64,7 @@ async def send_welcome(msg: types.Message):
     # print(type(list_project))
     # print(list_project)
     # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
-    dict_stage_workflow = {'#сделать': 1, '#в работе': 2, '#сделано': 3, '#завершено': 4}
+    dict_stage_workflow = {'#сделать': 1, '#в работе': 2, '#вработе': 2, '#в_работе': 2, '#сделано': 3, '#завершено': 4}
     if msg.text.title() == 'Авторизация':
         if fetchall_id(msg.from_user.id):
             name_group = fetchall_group(msg.from_user.id)
