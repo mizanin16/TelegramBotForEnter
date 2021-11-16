@@ -8,7 +8,7 @@ from aiogram.utils import executor
 
 import markup as nav
 from config import TELEGRAM_API_TOKEN
-from flow_connect import flow_connect_request, flow_get_project_list, flow_get_task_list, flow_update_task
+from flow_connect import *
 
 from db import *
 
@@ -121,13 +121,12 @@ async def send_welcome(msg: types.Message):
             responsible_id_flow = msg.values['reply_to_message']['contact']['phone_number']
             responsible_id_tlg = get_tlg_id(flow_id=responsible_id_flow, flow_name=None)
             owner_id, owner_name = fetchall_flow_id(msg.from_user.id)
-            title = msg.text.replace('#Задача ', '').replace('#Задача', '').replace('#задача', '').replace('#задача ',
-                                                                                                           '')
+            title = msg.text.title()
+            title = title.replace('#Задача', '').replace('#Задача ', '')
             if len(title) > 3:
                 project_id = re.findall(r'\d+$', title)
                 if len(project_id) > 0:
                     project_name = ''
-                    # list_project = flow_get_project_list()
                     for current_name in list_project:
                         if current_name['id'] == int(project_id[0]):
                             project_name = current_name['name']
@@ -141,9 +140,9 @@ async def send_welcome(msg: types.Message):
                         title_msg = title + "Без привязки к проекту "
                     else:
                         title_msg = title + "Проект: " + project_name
-                    await msg.answer('Задача успешно поставлена!')
+                    await msg.answer(f'Задача успешно поставлена! \nID задачи: {flow_id_task}')
                     await bot.send_message(responsible_id_tlg, f"Вам поставлена задача от {owner_name}!\n"
-                                                               f"Заголовок задачи: {title_msg} ID задачи: {flow_id_task}")
+                                                               f"Заголовок задачи: {title_msg} \nID задачи: {flow_id_task}")
                 else:
                     await msg.answer('Отсутствует номер проекта. '
                                      'Чтобы узнать номер доступных проектов напишите команду #Проекты\n'
@@ -166,14 +165,21 @@ async def send_welcome(msg: types.Message):
             await msg.answer(msg_list_items)
 
     elif '#Удалить' in msg.text.title():
-        if 'reply_to_message' in msg.values:
+        if msg.values['reply_to_message']['contact']:
             if msg.from_user.id in list_boss:
-                delete_user(msg.from_user.id)
+                user = msg.values['reply_to_message']['contact']['first_name']
+                delete_user(user)
                 await msg.answer('Контакт успешно удалён')
             else:
                 await msg.answer('У вас нет прав для удаления!')
-        else:
-            await msg.answer('Вы не прикрепили контакт человека')
+            return
+        elif 'Задача успешно поставлена!' in msg.values['reply_to_message']['text']:
+            text = msg.values['reply_to_message']['text']
+            id_tlg = text[text.find('ID задачи:') + 11:]
+            if flow_delete(id_tlg):
+                await msg.answer('Задача успешно удалена!')
+            else:
+                await msg.answer('Ошибка при удалении!')
 
     elif msg.text.lower() in dict_stage_workflow.keys():
         if 'reply_to_message' in msg.values:
@@ -183,14 +189,17 @@ async def send_welcome(msg: types.Message):
                 id_tlg = text_msg[text_msg.find('ID задачи:') + 11:]
                 owner_name = text_msg[text_msg.find('от') + 3:text_msg.find('!\n')]
                 print(id_tlg)
-                flow_update_task(id_tlg, stage=dict_stage_workflow[msg.text.lower()])
-                await msg.answer(f"Успешно произведено изменение этапа проекта.\nЭтап: {stage}")
-                owner_id_tlg = get_tlg_id(flow_id=None, flow_name=owner_name)
-                responsible_id, responsible_name = fetchall_flow_id(msg.from_user.id)
-                msg_answer_to_owner = f'{text_msg[text_msg.find("Заголовок задачи"):]}\n' \
-                                      f'Пользователь {responsible_name} изменил этап задачи проекта.\nЭтап: {stage}'
+                if not id_tlg.isdigit():
+                    await msg.answer(f"Задача выбрана некорректно!")
+                else:
+                    flow_update_task(id_tlg, stage=dict_stage_workflow[msg.text.lower()])
+                    await msg.answer(f"Успешно произведено изменение этапа проекта.\nЭтап: {stage}")
+                    owner_id_tlg = get_tlg_id(flow_id=None, flow_name=owner_name)
+                    responsible_id, responsible_name = fetchall_flow_id(msg.from_user.id)
+                    msg_answer_to_owner = f'{text_msg[text_msg.find("Заголовок задачи"):]}\n' \
+                                          f'Пользователь {responsible_name} изменил этап задачи проекта.\nЭтап: {stage}'
 
-                await bot.send_message(owner_id_tlg, msg_answer_to_owner)
+                    await bot.send_message(owner_id_tlg, msg_answer_to_owner)
 
     else:
         await msg.answer(

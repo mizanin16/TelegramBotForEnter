@@ -22,38 +22,41 @@ def flow_connect_request(title: str, responsible_id: int, owner_id: int, model_i
     print(new_post.text)
 
 
-def flow_delete():
+def flow_delete(id_flow: int) -> bool:
     query_params = {"api_key": api_key}
-    id = 678
-    post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/delete/{id}'
+    # id = 678
+    post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/delete/{id_flow}'
     # query_params.update(
     #     {'name': f'{title}', 'description': 'Задача создана посредством работы бота в телеграмме',
     #      'priority': 1, 'responsible_id': responsible_id, 'owner_id': owner_id, 'type': 0})
 
-    print(query_params)
+    # print(query_params)
     new_post = requests.post(post, data=query_params)
     print(new_post)
-    print(new_post.text)
+    if b'error' in new_post.content:
+        return False
+    else:
+        return True
+    # print(new_post.text)
 
 
 def flow_get():
     query_params = {"api_key": api_key}
-    id = 478
     post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/list?api_key={api_key}'
     # post = rf'https://{company}.flowlu.ru/api/v1/module/task/tasks/get/{id}?api_key={api_key}'
     # query_params.update(
     #     {'name': f'{title}', 'description': 'Задача создана посредством работы бота в телеграмме',
     #      'priority': 1, 'responsible_id': responsible_id, 'owner_id': owner_id, 'type': 0})
     query_params_new = []
-    print(query_params)
+    # print(query_params)
     new_post = requests.get(post)
-    print(new_post)
-    print(new_post.text)
+    # print(new_post)
+    # print(new_post.text)
     js_text = json.loads(new_post.text)
     print(js_text)
     # print(js_text['response']['workflow_id'])
     # print(js_text['response']['workflow_stage_id'])
-    print()
+    # print()
 
 
 def flow_get_task_list(name) -> int:
@@ -90,7 +93,6 @@ def flow_update_task(id_task, stage):
     print(new_post)
     print(new_post.text)
     # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
-
 
 # flow_delete()
 # flow_get_project_list()

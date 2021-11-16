@@ -61,8 +61,8 @@ def fetchall_flow_id(id_users: int) -> list:
         return row
 
 
-def delete_user(id_users: int):
-    cursor.execute(f"DELETE FROM users WHERE id_user ='{id_users}' ")
+def delete_user(flow_name: str):
+    cursor.execute(f"DELETE FROM users WHERE flow_name = '{flow_name}' ")
     conn.commit()
 
 
