@@ -11,3 +11,4 @@ venv/
 SQLiteStudio/
 #config.py
 base.txt
+dist

@@ -15,31 +15,43 @@ from db import *
 TOKEN = TELEGRAM_API_TOKEN
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+media_dir = os.path.join(BASE_DIR, 'media')
 
 
 @dp.message_handler(commands=['start'])
 async def send_welcome(msg: types.Message):
+    """
+    Ответ на сообщение /start
+    """
     if fetchall_id(msg.from_user.id):
+        # Если пользователь добавлен в список пользователей в БД
         await msg.answer(
             f'Здравствуйте {fetchall_fullname(msg.from_user.id)}. Вы успешно авторизованы в группе '
             f'{fetchall_group(msg.from_user.id)}\n'
             f'Чтобы узнать возможности бота вызывайте /help')
     else:
+        # Если пользователь не зарегистрирован, предлагается зарегистрироваться из списка, который получаем из flow
         await msg.answer(
-            f'Я бот команды Enter. Приятно познакомиться, {msg.from_user.first_name}. Вам необходимо пройти этап авторизации',
+            f'Я бот команды Enter. Приятно познакомиться, {msg.from_user.first_name}. '
+            f'Вам необходимо пройти этап авторизации',
             reply_markup=nav.authMenu)
 
 
 @dp.message_handler(commands=['help'])
 async def send_welcome(msg: types.Message):
+    """
+    Ответ на сообщение /help
+    """
     if fetchall_id(msg.from_user.id):
+        # Если пользователь добавлен в список пользователей в БД, Бот отправляет порядок действий
         await msg.answer(
             f'Для поставновки задач необходимо:\n'
             f'1. Выбрать исполнителя из списка пользователей. Список пользователей вызывается командой:@enter_promo_bot')
-        await msg.answer_photo(photo=open('media/inline_msg_cut.jpg', 'rb'))
+        await msg.answer_photo(photo=open(os.path.join(media_dir, 'inline_msg_cut.jpg'), 'rb'))
         await msg.answer(
             f'2. Прикрепить выбранный контакт к следущему сообщению')
-        await msg.answer_photo(photo=open('media/reply_contact.jpg', 'rb'))
+        await msg.answer_photo(photo=open(os.path.join(media_dir, 'reply_contact.jpg'), 'rb'))
         await msg.answer(
             f'3. Прописать команду\nПример:\n#Задача Заголовок задачи ЦИФРА ПРОЕКТА\n')
         await msg.answer(
@@ -47,8 +59,8 @@ async def send_welcome(msg: types.Message):
         await msg.answer(
             f'5. Чтобы изменить этап проекта, необходимо прикрепить сообщение с поставленной задачей и ввести команду\n'
             f'Список доступных команд:\n #Сделать \n #В Работе \n #Сделано \n #Завершено')
-        # await msg.answer_photo(photo=open('media/msg_end_example.png', 'rb'))
     else:
+        # Если пользователь не зарегистрирован, предлагается зарегистрироваться из списка, который получаем из flow
         await msg.answer(
             f'Я бот команды Enter. Приятно познакомиться, {msg.from_user.first_name}. Вам необходимо пройти этап авторизации',
             reply_markup=nav.authMenu)
@@ -56,16 +68,15 @@ async def send_welcome(msg: types.Message):
 
 @dp.message_handler()
 async def send_welcome(msg: types.Message):
+    """
+    Получаем сообщение Боту и производим соотношение команд
+    """
     print('Message = ' + msg.text)
-    # print(msg.md_text)
-    # print(msg.from_user.id)
 
     list_project = flow_get_project_list()
-    # print(type(list_project))
-    # print(list_project)
-    # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
     dict_stage_workflow = {'#сделать': 1, '#в работе': 2, '#вработе': 2, '#в_работе': 2, '#сделано': 3, '#завершено': 4}
     if msg.text.title() == 'Авторизация':
+        # Проверяем авторизацию пользователя
         if fetchall_id(msg.from_user.id):
             name_group = fetchall_group(msg.from_user.id)
             if len(name_group) > 3:
@@ -77,9 +88,9 @@ async def send_welcome(msg: types.Message):
         else:
             await msg.answer("Необходимо связать свой аккаунт с аккаунтом из Flow\n"
                              "Введите @enter_promo_bot и выберите себя из списка.")
-            await msg.answer_photo(photo=open('media/inline_msg.jpg', 'rb'))
+            await msg.answer_photo(photo=open(os.path.join(media_dir, 'inline_msg.jpg'), 'rb'))
             await msg.answer("Прикрепив контакт к сообщению введите #Name")
-            await msg.answer_photo(photo=open('media/end_msg.jpg', 'rb'))
+            await msg.answer_photo(photo=open(os.path.join(media_dir, 'end_msg.jpg'), 'rb'))
 
     elif '#Name' in msg.text.title():
         if not fetchall_id(msg.from_user.id):
@@ -102,10 +113,9 @@ async def send_welcome(msg: types.Message):
             await msg.answer(f"Вы уже зарегистрированы в системе")
 
     elif '#AddGroup' in msg.text.title():
+        # Добавляем в группу пользователя
         if msg.from_user.id in list_boss:
             text = msg.text.replace('#AddGroup ', '').split(' ')
-            # print(text)
-
             group = text[0].replace('Group:', '')
             id_user = int(text[1].replace('ID:', ''))
             if group.lower() == 'boss':
@@ -116,13 +126,13 @@ async def send_welcome(msg: types.Message):
                 set_value = f"other_category == '{group}' "
             update_new(set_value, id_user)
     elif '#Задача' in msg.text.title():
+        # Ставим задачу пользователю
         if 'reply_to_message' in msg.values:
-            # owner - владелец
             responsible_id_flow = msg.values['reply_to_message']['contact']['phone_number']
             responsible_id_tlg = get_tlg_id(flow_id=responsible_id_flow, flow_name=None)
             owner_id, owner_name = fetchall_flow_id(msg.from_user.id)
-            title = msg.text.title()
-            title = title.replace('#Задача', '').replace('#Задача ', '')
+            title = msg.text
+            title = title.replace('#Задача ', '').replace('#Задача', '').replace('#задача ', '').replace('#задача', '')
             if len(title) > 3:
                 project_id = re.findall(r'\d+$', title)
                 if len(project_id) > 0:
@@ -155,6 +165,7 @@ async def send_welcome(msg: types.Message):
             await msg.answer('Вы не прикрепили контакт человека')
 
     elif '#Проекты' in msg.text.title():
+        # Получаем список проектов
         msg_list_items = ''
         if fetchall_id(msg.from_user.id):
 
@@ -165,28 +176,38 @@ async def send_welcome(msg: types.Message):
             await msg.answer(msg_list_items)
 
     elif '#Удалить' in msg.text.title():
-        if msg.values['reply_to_message']['contact']:
-            if msg.from_user.id in list_boss:
-                user = msg.values['reply_to_message']['contact']['first_name']
-                delete_user(user)
-                await msg.answer('Контакт успешно удалён')
+        # Удаляем поставленную задачу
+        if 'reply_to_message' in msg.values:
+            if msg.values['reply_to_message']['contact']:
+                if msg.from_user.id in list_boss:
+                    user = msg.values['reply_to_message']['contact']['first_name']
+                    delete_user(user)
+                    await msg.answer('Контакт успешно удалён')
+                else:
+                    await msg.answer('У вас нет прав для удаления!')
+                return
+            elif 'ID задачи:' in msg.values['reply_to_message']['text']:
+                text = msg.values['reply_to_message']['text']
+                id_tlg = text[text.find('ID задачи:') + 11:]
+                id_tlg = id_tlg[:id_tlg.find('\n')]
+                if flow_delete(id_tlg):
+                    await msg.answer('Задача успешно удалена!')
+                else:
+                    await msg.answer('Ошибка при удалении!')
             else:
-                await msg.answer('У вас нет прав для удаления!')
-            return
-        elif 'Задача успешно поставлена!' in msg.values['reply_to_message']['text']:
-            text = msg.values['reply_to_message']['text']
-            id_tlg = text[text.find('ID задачи:') + 11:]
-            if flow_delete(id_tlg):
-                await msg.answer('Задача успешно удалена!')
-            else:
-                await msg.answer('Ошибка при удалении!')
-
+                await msg.answer('Сообщение не корректно отправлено!')
+        else:
+            await msg.answer('Сообщение не прикреплено!')
     elif msg.text.lower() in dict_stage_workflow.keys():
+        # Изменение этапа разработки
         if 'reply_to_message' in msg.values:
             if 'ID задачи:' in msg.values['reply_to_message']["text"]:
                 stage = msg.text.title().replace("#", "")
                 text_msg = msg.values['reply_to_message']['text']
                 id_tlg = text_msg[text_msg.find('ID задачи:') + 11:]
+                if text_msg.find('от') == -1:
+                    await msg.answer(f"Сообщение прикреплено не корректно!!")
+                    return
                 owner_name = text_msg[text_msg.find('от') + 3:text_msg.find('!\n')]
                 print(id_tlg)
                 if not id_tlg.isdigit():
@@ -248,12 +269,20 @@ async def inline_handler(query: types.InlineQuery):
 
 
 async def flowlu_connect_refresh():
+    """
+    Определениен списка пользователей и обновление списка пользователей
+    :return:
+    """
     flow_check_users()
     global list_boss
     list_boss = fetchall_boss()
 
 
 async def scheduler():
+    """
+    Настройка выполнения асинхронной функции
+    :return:
+    """
     aioschedule.every().hour.do(flowlu_connect_refresh)
 
     while True:
@@ -262,6 +291,9 @@ async def scheduler():
 
 
 async def on_startup(_):
+    """
+    Создание асинхронной функции раз в час для опроса БД
+    """
     asyncio.create_task(scheduler())
 
 

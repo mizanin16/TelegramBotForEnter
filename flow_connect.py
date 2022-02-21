@@ -16,10 +16,10 @@ def flow_connect_request(title: str, responsible_id: int, owner_id: int, model_i
     if model_id != 0:
         query_params.update({"module": "st", "model": "project", 'model_id': model_id, 'project_stage_id': 1})
     # print('flow_connect_request success')
-    print(query_params)
+    # print(query_params)
     new_post = requests.post(post, data=query_params)
-    print(new_post)
-    print(new_post.text)
+    # print(new_post)
+    # print(new_post.text)
 
 
 def flow_delete(id_flow: int) -> bool:
@@ -53,7 +53,7 @@ def flow_get():
     # print(new_post)
     # print(new_post.text)
     js_text = json.loads(new_post.text)
-    print(js_text)
+    # print(js_text)
     # print(js_text['response']['workflow_id'])
     # print(js_text['response']['workflow_stage_id'])
     # print()
@@ -90,8 +90,8 @@ def flow_update_task(id_task, stage):
     # print(query_params)
     query_params.update({'workflow_id': 1, 'workflow_stage_id': stage})
     new_post = requests.post(post, data=query_params)
-    print(new_post)
-    print(new_post.text)
+    # print(new_post)
+    # print(new_post.text)
     # 1/4 завершено 1/1 сделать 1/2 в работе 1/3 сделано
 
 # flow_delete()

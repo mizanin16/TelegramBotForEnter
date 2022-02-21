@@ -116,7 +116,9 @@ def fetchall_group(id_users: str) -> str:
 
 
 def flow_check_users():
-    """Заполнение списка пользователей из флоулу"""
+    """
+    Заполнение списка пользователей из флоулу
+    """
     conn = sqlite3.connect(os.path.join("db", "users.db"))
     cursor = conn.cursor()
     get_users = fr'https://{company}.flowlu.ru/api/v1/module/core/user/list?api_key={api_key}'
@@ -136,16 +138,3 @@ def flow_check_users():
         except Exception as ex:
             print(ex)
     conn.commit()
-
-#
-# def check_db_exists():
-#     """Проверяет, инициализирована ли БД, если нет — инициализирует"""
-#     cursor.execute("SELECT name FROM sqlite_master "
-#                    "WHERE type='table' AND name='expense'")
-#     table_exists = cursor.fetchall()
-#     if table_exists:
-#         return
-#     _init_db()
-
-# check_db_exists()
-# flow_check_users()
